@@ -1,0 +1,60 @@
+package Assignment1;
+
+import java.awt.AWTException;
+
+import org.openqa.selenium.By;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+
+
+public class TestCase3 {
+	WebDriver dr;int ch=1;
+    @BeforeClass
+     public void init() throws AWTException
+        {   
+         if(ch==1)
+            {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
+            dr= new ChromeDriver();
+            }
+            
+            if(ch==2)
+            {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+            dr = new FirefoxDriver();
+            }
+            dr.get("https://demoqa.com/droppable/");
+
+        }
+
+		@Test
+		void TC1() {
+			
+			//Element which needs to drag. 
+			WebElement from=dr.findElement(By.id("draggable"));
+        	//WebElement From=dr.findElement(By.xpath("//*[@id=\"draggable\"]/p"));	
+         
+        	//Element on which need to drop.	
+        	WebElement to=dr.findElement(By.id("droppabe"));
+        	//WebElement To=dr.findElement(By.xpath("//*[@id=\"droppable\"]/p"));					
+         		
+        	//Using Action class for drag and drop.		
+        	Actions act=new Actions(dr);					
+
+        	//Dragged and dropped.		
+        	act.dragAndDrop(from, to).build().perform();
+        	String textTo = to.getText();
+
+    		if(textTo.equals("Dropped!")) {
+    			System.out.println("PASS: Source is dropped to target as expected");
+    		}else {
+    			System.out.println("FAIL: Source couldn't be dropped to target as expected");
+    		}
+			
+		}
+}
