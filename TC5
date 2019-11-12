@@ -1,0 +1,88 @@
+package Assignment1;
+
+import java.awt.AWTException;
+import java.util.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+
+
+
+public class TestCase5 {
+		
+	WebDriver dr;int ch=1;
+    @BeforeClass
+     public void StartApp() throws AWTException
+        {   
+         if(ch==1)
+            {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
+            dr= new ChromeDriver();
+            }
+            
+            if(ch==2)
+            {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+            dr = new FirefoxDriver();
+            }
+            dr.get("https://demoqa.com/selectmenu/");
+        }
+	
+	@Test
+	void TC1() {
+//			dr.findElement(By.xpath("//*[@id=\"sidebar\"]/aside[2]/ul/li[10]/a")).click();
+			
+			//Se.lect sel=new Select(dr.findElement(By.id("speed-button")));
+			/*List<WebElement> arrow=dr.findElements(By.className("ui-icon-triangle-1-s"));
+//			ui-selectmenu-icon ui-icon ui-icon-triangle-1-s
+			int k=1,x=0;
+			for(int i=1;i<=2;i++) {
+				if(i==1) {x=5;} if(i==2) {x=4;}
+					for(int j=0;j<x;j++) {
+						System.out.println(k);
+				dr.findElement(By.className("ui-icon-triangle-1-s")).click();
+				System.out.println(dr.findElement(By.id("ui-id-"+(k))).getText());
+				dr.findElement(By.id("ui-id-"+(k))).click();
+				k++;
+				//dr.findElement(By.className("ui-icon-triangle-1-s")).click();
+				//break;
+			}
+			}*/
+			
+	
+	List<WebElement> arrow=dr.findElements(By.className("ui-icon-triangle-1-s"));
+	System.out.println(arrow.size());
+	for(int i=0;i<arrow.size();i++) {	
+		//List<WebElement> ele1 = dr.findElements(By.className("ui-menu-item"));
+		arrow.get(i).click();
+		System.out.println("a");
+		List<WebElement> ele1 = dr.findElements(By.className("ui-menu-item"));
+	
+		for(int j=0;j<ele1.size();j++) {
+			//System.out.println("hello");
+//				System.out.println(b.getText());
+			System.out.println(ele1.get(j).getText());
+				if(!ele1.get(j).equals("")) 
+					try {
+						
+					ele1.get(j).click();
+					}
+				catch(ElementNotVisibleException e)
+				{
+					continue;
+				}
+				catch(WebDriverException e) {
+					continue;
+				}
+					if(j!=ele1.size()-1)
+						arrow.get(i).click();
+			}
+		}
+	}
+}
+
