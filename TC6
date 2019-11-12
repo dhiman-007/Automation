@@ -1,0 +1,105 @@
+package Assignment1;
+
+import java.awt.AWTException;
+import java.util.List;
+
+ 
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+ 
+
+public class TestCase6 {
+    WebDriver dr;int ch=2;
+    @BeforeClass
+     public void StartApp() throws AWTException
+        {   
+         if(ch==1)
+            {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
+            dr= new ChromeDriver();
+            }
+            
+            if(ch==2)
+            {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+            dr = new FirefoxDriver();
+            }
+            dr.get("https://demoqa.com/controlgroup/");
+            
+             
+        }
+    /* @AfterClass
+      public void CloseApp()
+        {
+     driver.close();
+        }*/
+        
+     @Test(priority=1)
+        public void Testcase1() throws InterruptedException, AWTException,NumberFormatException
+     {
+        
+         dr.findElement(By.xpath("//*[@id=\"ui-id-8-button\"]/span[1]")).click();
+
+ 
+
+        List<WebElement> element = dr.findElements(By.className("ui-menu-item-wrapper"));
+        String text = "";
+        int i = 0;
+        System.out.println(element.size());
+        while (i != element.size()) {
+            text = element.get(i).getText();
+            System.out.println(text+" ");
+            Thread.sleep(2000);
+            if (text.equals("Luxury")) {
+                element.get(i).click();
+                
+            }
+            i++;
+        }
+        String text1 = "";
+
+        WebElement r=dr.findElement(By.className("ui-controlgroup-vertical"));
+        List<WebElement> j =r.findElements(By.className("ui-controlgroup-item"));
+
+ 
+        i=0;
+        
+        while(i!=j.size())
+        {
+         text1=j.get(i).getText();
+         
+         	if (text1.equals("Standard"))
+             {                
+         		j.get(i).click();    
+             }
+         
+         	if (text1.equals("Insurance")) 
+             {                
+         		j.get(i).click();
+             }
+
+         	if(text1.equals("# of cars"))
+         	{ 
+         		dr.findElement(By.id("vertical-spinner")).click();
+         		dr.findElement(By.id("vertical-spinner")).sendKeys("6");
+         	}
+         	
+         	if(text1.equals("Book Now!"))
+         	{
+         		j.get(i).click();
+         	}
+//         	dr.findElement(By.id("book")).click();
+//         	dr.findElement(By.id("book")).getText();
+         i++;
+        
+         }
+        Thread.sleep(2000);
+     }
+     
+}
