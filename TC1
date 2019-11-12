@@ -1,0 +1,51 @@
+package Assignment1;
+
+import java.awt.AWTException;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+
+public class TestCase1 {
+		
+	WebDriver dr;int ch=2;
+    @BeforeClass
+     public void init() throws AWTException
+        {   
+         if(ch==1)
+            {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
+            dr= new ChromeDriver();
+            }
+            
+            if(ch==2)
+            {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+            dr = new FirefoxDriver();
+            }
+            dr.get("https://demoqa.com/selectable/");
+            
+             
+        }
+	
+	@Test
+	void TC1() {	
+			/*
+			 * 1)	https://demoqa.com/selectable/
+					Create a xpath or Css path for this Selectable 
+					Item and Click on each of the Items and print the Item Name.
+
+			 */
+			int a = dr.findElements(By.className("ui-selectee")).size();
+			for(int i=1;i<=a;i++) 
+			{
+				dr.findElement(By.xpath("//*[@id=\"selectable\"]/li["+i+"]")).click();
+				System.out.println(dr.findElement(By.xpath("//*[@id=\"selectable\"]/li["+i+"]")).getText());
+			}
+			
+			
+			
+		}
+}
