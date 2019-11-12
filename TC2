@@ -1,0 +1,96 @@
+package Assignment1;
+
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
+import static org.testng.Assert.fail;
+
+import java.awt.AWTException;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+
+public class TestCase2 {
+	WebDriver dr;int ch=1;
+    @BeforeClass
+     public void init() throws AWTException
+        {   
+         if(ch==1)
+            {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
+            dr= new ChromeDriver();
+            }
+            
+            if(ch==2)
+            {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+            dr = new FirefoxDriver();
+            }
+            dr.get("https://demoqa.com/html-contact-form/");
+
+        }
+	
+		@Test
+		void TC1() {
+			/*
+			 * 2)	https://demoqa.com/html-contact-form/
+					Please fill this contact form using CSS and Xpath.
+					a) Enter First Name
+					b) Enter Last Name
+					c) Enter Country
+					d) Enter Subject
+					e) Click on Submit
+					f) Try to find these links with partial text
+					Google Link
+					Google Link is here
+					g) Open this above links with new Tab.
+			 */
+			String Fname="Abhilash";
+			String Lname="Yadav";
+			String country="India";
+			String Subject="computer Science";
+			String x[]= {Fname,"First name",Lname,"Last Name",country,"Country Name",Subject,"Subject Name"};
+			int z=0,k=0;
+			while(k<x.length-1) {
+			for(int i=0;i<x[k].length();i++) {
+				if(Character.isDigit(x[k].charAt(i))) {
+					z=1;
+					break;
+				}
+			}
+			if(z==1){
+					System.out.println("Enter the valid "+"Credential  " + x[k+1]+" :"+x[k]+" as input should only contain letters !");
+				 org.testng.Assert.fail("Invalid");
+				}
+			k+=2;
+			}
+			dr.findElement(By.className("firstname")).sendKeys(Fname);
+			System.out.println(Fname);
+			dr.findElement(By.id("lname")).sendKeys(Lname);
+			System.out.println(Lname);
+			dr.findElement(By.xpath("//*[@id=\"content\"]/div[2]/div/form/input[3]")).sendKeys(country);
+			System.out.println(country);
+			
+			
+			
+			WebElement subject= dr.findElement(By.xpath("//textarea[@name='subject']"));
+			subject.sendKeys(Subject);
+			System.out.println(Subject);
+			
+			String ntab=Keys.chord(Keys.CONTROL,Keys.RETURN); 	
+			System.out.println(ntab);
+			dr.findElement(By.partialLinkText("Google Link")).sendKeys(ntab);
+			String tab=Keys.chord(Keys.CONTROL,Keys.RETURN);
+			dr.findElement(By.partialLinkText("Google Link is here")).sendKeys(tab);
+			dr.findElement(By.cssSelector("input[type=submit]")).click();
+			//dr.close();
+
+			
+			
+		}
+}
