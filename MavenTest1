@@ -1,0 +1,520 @@
+package com_automation.MavenBop;
+
+
+
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
+
+public class TCO1_Test {
+
+	WebDriver a;
+
+	@Test (priority=1)
+	public void Step1()
+	{
+	//Step 1
+	//Launch Open Cart application
+	System.setProperty("webdriver.chrome.driver","D:\\ALM image\\Sel\\chromedriver.exe");
+	a=new ChromeDriver();
+	a.get("https://demo.opencart.com");
+
+	Assert.assertEquals(a.getTitle(),"Your Store","Webpage Open: Unsuccessful\n");
+	}
+
+	@Test (priority=2,dependsOnMethods="Step1")
+	public void Step2()
+	{
+	//Step 2
+	//Click on "Create an account" link
+
+	a.findElement(By.xpath("//a[@href='https://demo.opencart.com/index.php?route=account/account']")).click();
+	a.findElement(By.xpath("//a[@href='https://demo.opencart.com/index.php?route=account/register']")).click();
+
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=account/register","Registration Page Open: Unsuccessful\n");
+
+	}
+
+	@Test (priority=3,dependsOnMethods="Step2")
+	public void Step3() throws BiffException, IOException
+	{
+	File f=new File("D:\\register.xls");
+	Workbook z=Workbook.getWorkbook(f);
+	Sheet s=z.getSheet(0);
+
+	int col=s.getColumns();
+	        //int row=s.getRows();
+	        
+	String t[] = new String[col];
+
+	for(int r=0;r<1;r++)
+	{
+	for(int c=0;c<col;c++)
+	{
+	//access data
+	Cell b=s.getCell(c,r);
+	t[c]=b.getContents();
+	}
+
+	//Step 3
+	//Details of the page - Name(s), Email, Phone, Password.
+
+	a.findElement(By.name("firstname")).sendKeys(t[0]);
+	a.findElement(By.name("lastname")).sendKeys(t[1]);
+	a.findElement(By.name("email")).sendKeys(t[2]);
+	a.findElement(By.name("telephone")).sendKeys(t[3]);
+	a.findElement(By.name("password")).sendKeys(t[4]);
+	a.findElement(By.name("confirm")).sendKeys(t[4]);
+
+	char[] c1=a.findElement(By.name("firstname")).getAttribute("value").toCharArray();
+	int flag=0;
+	for(int i=0;i<c1.length;i++)
+	{
+	if(!Character.isAlphabetic(c1[i]))
+	{
+	flag=1;
+	}
+	}
+	Assert.assertEquals(flag,0,"First name Validation : Unsuccessful\n");
+
+	char[] c2=a.findElement(By.name("lastname")).getAttribute("value").toCharArray();
+	flag=0;
+	for(int i=0;i<c2.length;i++)
+	{
+	if(!Character.isAlphabetic(c2[i]))
+	{
+	flag=1;
+	}
+	}
+	Assert.assertEquals(flag,0,"Last name Validation : Unsuccessful\n");
+
+	String s3=a.findElement(By.name("email")).getAttribute("value");
+	Assert.assertEquals(s3,t[2],"Email Validation : Unsuccessful\n");
+
+	char c4[]=a.findElement(By.name("telephone")).getAttribute("value").toCharArray();
+	flag=0;
+	for(int i=0;i<c4.length;i++)
+	{
+	if(!Character.isDigit(c4[i]))
+	{
+	flag=1;
+	}
+	}
+	Assert.assertEquals(flag,0,"Telephone Validation : Unsuccessful\n");
+
+	String s5=a.findElement(By.name("password")).getAttribute("value");
+	Assert.assertEquals(s5.length(),8,"Password Validation : Unsuccessful\n");
+
+	String s6=a.findElement(By.name("confirm")).getAttribute("value");
+	Assert.assertEquals(s5,s6,"Confirm Password Validation : Unsuccessful\n");
+
+	}
+
+	}
+
+	@Test (priority=4,dependsOnMethods="Step3")
+	public void Step4()
+	{
+	//Step 4
+	//Check the "Privacy Policy" and click on "Continue"
+
+	a.findElement(By.name("agree")).click();
+	a.findElement(By.xpath("//input[@type='submit']")).click();
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=account/success","Registration : Unsuccessful\n");
+	}
+
+	@Test (priority=5,dependsOnMethods="Step4")
+	public void Step5() throws BiffException, IOException
+	{
+	//Step 5
+	//Click on "Contact" link
+
+	a.findElement(By.xpath("//a[@href='https://demo.opencart.com/index.php?route=information/contact']")).click();
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=information/contact","Contact Page open : Unsuccessful\n");
+
+	File f=new File("D:\\register.xls");
+	Workbook z=Workbook.getWorkbook(f);
+	Sheet s=z.getSheet(0);
+
+	String t[] = new String[2];
+
+	Cell b=s.getCell(0,0);
+	t[0]=b.getContents();
+	String s1=a.findElement(By.name("name")).getAttribute("value");
+	Assert.assertEquals(s1,t[0],"Name found : Unsuccessful\n");
+
+	Cell c=s.getCell(2,0);
+	t[1]=c.getContents(); 
+	String s2=a.findElement(By.name("email")).getAttribute("value");
+	Assert.assertEquals(s2,t[1],"Email found : Unsuccessful\n");
+	}
+
+	@Test (priority=6,dependsOnMethods="Step5")
+	public void Step6()
+	{
+	//Step 6
+	//Type the Enquiry - 100 characters
+
+	a.findElement(By.name("enquiry")).sendKeys("This is to Change of Address/Phone number");
+
+	String s=a.findElement(By.name("enquiry")).getAttribute("value");
+	Assert.assertEquals(s,"This is to Change of Address/Phone number","Enquiry Validation : Unsuccessful\n");
+	}
+
+	@Test (priority=7,dependsOnMethods="Step6")
+	public void Step8()
+	{
+	//Step 8
+	//Click on "Continue" and Click on "Continue" 
+
+	a.findElement(By.xpath("//input [@type='submit']")).click();
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=information/contact/success","Contact Us Page Display: Unsuccessful\n");
+
+	a.findElement(By.xpath("//a[@href='https://demo.opencart.com/index.php?route=common/home']")).click();
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=common/home","Home Page Display: Unsuccessful\n");
+	}
+
+	@Test (priority=8,dependsOnMethods="Step8")
+	public void Step9()
+	{
+	//Step 9
+	//Click on "Samsung Galaxy Tab" on home page.
+
+	a.findElement(By.xpath("//html/body/div/div/div/div/div[2]/span")).click();
+
+	a.findElement(By.xpath("//html/body/div/div/div/div/div/div/div[2]/a/img")).click();
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=product/product&path=57&product_id=49","Samsung Galaxy Tab Open:Unsuccessful\n");
+	}
+
+	@Test (priority=9,dependsOnMethods="Step9")
+	public void Step10()
+	{
+	//Step 10
+	//Click on "Review" tab below
+
+	a.findElement(By.xpath("//html//body/div[2]/div/div/div/div/ul[2]/li[2]/a")).click();
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div/div/div/div/div/div[2]/form/h2")).getText(),"Write a review","Review Open: Unsuccessful\n");
+	}
+
+	@Test (priority=10,dependsOnMethods="Step10")
+	public void Step11() throws BiffException, IOException, InterruptedException
+	{
+	//Step 11
+	//Fill in your details -Name and Review(with less than 20 words). Select the rating as given in Excel.Click Continue.
+
+	File f=new File("D:\\review.xls");
+	Workbook z=Workbook.getWorkbook(f);
+	Sheet s=z.getSheet(0);
+	      
+	Cell b=s.getCell(1,0);
+	Cell c=s.getCell(2,0);
+
+	a.findElement(By.name("text")).sendKeys(b.getContents());
+
+	int x=Integer.parseInt(c.getContents());
+	String st="//html/body/div[2]/div/div/div/div/div/div[2]/form/div[4]/div/input["+x+"]";
+	a.findElement(By.xpath(st)).click();
+
+	int flag=0;
+	if(a.findElement(By.name("text")).getAttribute("value").length()<20)
+	{
+	flag=1;
+	}
+	a.findElement(By.id("button-review")).click();
+
+	a.manage().timeouts().pageLoadTimeout(2, TimeUnit.SECONDS);
+	//Thread.sleep(3000);
+
+	File sr=((TakesScreenshot)a).getScreenshotAs(OutputType.FILE);
+	FileUtils.copyFile(sr,new File("D:\\Snap\\Snap2.png"));
+
+	Assert.assertEquals(flag,0,"Review size Validation : Unsuccessful\n");
+	}
+
+	@Test (priority=11,dependsOnMethods="Step11")
+	public void Step12() throws BiffException, IOException, InterruptedException
+	{
+	//Step 12
+	//Fill in your details -Name and Review(with length between 25 and 100). Select the rating as given in Excel.Click Continue.
+
+
+	File f=new File("D:\\review.xls");
+	Workbook z=Workbook.getWorkbook(f);
+	Sheet s=z.getSheet(0);
+	 
+	Cell x1=s.getCell(0,1);
+	Cell b=s.getCell(1,1);
+	Cell c=s.getCell(2,1);
+
+	a.findElement(By.xpath("//*[@id=\"input-name\"]")).sendKeys(x1.getContents());
+	a.findElement(By.name("text")).clear();
+	a.findElement(By.name("text")).sendKeys(b.getContents());
+
+	int x=Integer.parseInt(c.getContents());
+	String st="//html/body/div[2]/div/div/div/div/div/div[2]/form/div[5]/div/input["+x+"]";
+	a.findElement(By.xpath(st)).click();
+
+	a.findElement(By.id("button-review")).click();
+
+	Thread.sleep(3000);
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div//div/div/div/div/div[2]/form/div[2]")).getText().substring(0,9),"Thank you","Review Open: Unsuccessful\n");
+	}
+
+	@Test (priority=12,dependsOnMethods="Step12")
+	public void Step13() throws InterruptedException
+	{
+	//Step 13
+	//Click on "Add to wish list"
+
+	a.findElement(By.xpath("//html/body/div[2]/div/div/div/div[2]/div/button")).click();
+
+	Thread.sleep(5000);
+
+	System.out.println("\n"+a.findElement(By.xpath("//html/body/div[2]/div")).getText()+"\n");
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div")).getText().substring(0,7),"Success","Add to Wishlist : Unsuccessful\n");
+	}
+
+	@Test (priority=13,dependsOnMethods="Step13")
+	public void Step14()
+	{
+	//Step 14
+	//Close the success ribbon message on the page.
+
+	a.findElement(By.xpath("//html/body/div[2]/div/button")).click();
+
+	int flag=0;
+	if(a.findElement(By.xpath("//html/body/div[2]/div")).getText().substring(0,7).equals("Success"))
+	{
+	flag=1;
+	}
+	Assert.assertEquals(flag,0,"Success Message Close: Unsuccessful\n");
+	}
+
+	@Test (priority=14,dependsOnMethods="Step14")
+	public void Step15()
+	{
+	//Step 15
+	//Click on "Wishlist" link.
+
+	a.findElement(By.xpath("//html/body/nav/div/div[2]/ul/li[3]/a/i")).click();
+
+	Assert.assertEquals(a.findElement(By.tagName("h2")).getText(),"My Wish List","Wishlist Open: Unsuccessful\n");
+	}
+
+	@Test (priority=15,dependsOnMethods="Step15")
+	public void Step16()
+	{ 
+	//Step 16
+	//Click on "Pound Sterling".
+
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/button")).click();
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/ul/li[2]/button")).click();
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText().substring(0,1),"£","Pound Sterling Price Conversion : Unsuccesssful\n");
+	}
+
+	@Test (priority=16,dependsOnMethods="Step16")
+	public void Step17() throws IOException, InterruptedException
+	{
+	//Step 17
+	//Retrieve the value and write into any flat file.
+
+	FileWriter h=new FileWriter("d://price.txt");
+	BufferedWriter j=new BufferedWriter(h);
+
+	Thread.sleep(2000);
+
+	String y1=a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText();
+	j.write(y1);
+	j.close();
+
+	FileReader g=new FileReader("d://price.txt");
+	BufferedReader i=new BufferedReader(g);
+
+	int flag=0;
+	if(!(i.readLine().contains("£182.54")))
+	{
+	flag=1;
+	}
+
+	i.close();
+
+	Assert.assertEquals(flag,0,"Writing Price in Pound Sterling in flat file: Unsuccessful\n");
+	}
+
+	@Test (priority=17,dependsOnMethods="Step17")
+	public void Step18()
+	{ 
+	//Step 18
+	//Click on "Euro".
+
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/button")).click();
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/ul/li[1]/button")).click();
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText().substring(6),"€","Euro Price Conversion: Unsuccesssful\n");
+	}
+
+	@Test (priority=18,dependsOnMethods="Step18")
+	public void Step19() throws IOException, InterruptedException
+	{
+	//Step 19
+	//Retrieve the value and write into any flat file.
+
+	FileWriter h=new FileWriter("d://price.txt",true);
+	BufferedWriter j=new BufferedWriter(h);
+
+	Thread.sleep(2000);
+
+	j.write(a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText());
+	j.close();
+
+	FileReader g=new FileReader("d://price.txt");
+	BufferedReader i=new BufferedReader(g);
+
+	int flag=0;
+	if(!(i.readLine().contains("208.29€")))
+	{
+	flag=1;
+	}
+
+	i.close();
+
+	Assert.assertEquals(flag,0,"Writing Price in Euro in flat file: Unsuccessful\n");
+	}
+
+	@Test (priority=19,dependsOnMethods="Step19")
+	public void Step20()
+	{ 
+	//Step 20
+	//Click on "Us Dollars".
+
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/button")).click();
+	a.findElement(By.xpath("//html/body/nav/div/div/form/div/ul/li[3]/button")).click();
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText().substring(0,1),"$","Pound Sterling Price : Unsuccesssful");
+	}
+
+	@Test (priority=20,dependsOnMethods="Step20")
+	public void Step21() throws IOException, InterruptedException
+	{
+	//Step 21
+	//Retrieve the value and write into any flat file.
+
+	FileWriter h=new FileWriter("d://price.txt",true);
+	BufferedWriter j=new BufferedWriter(h);
+
+	Thread.sleep(2000);
+
+	j.write(a.findElement(By.xpath("//html/body/div[2]/div/div/div/table/tbody/tr/td[5]/div")).getText());
+	j.close();
+
+	FileReader g=new FileReader("d://price.txt");
+	BufferedReader i=new BufferedReader(g);
+
+	int flag=0;
+	if(!(i.readLine().contains("$241.99")))
+	{
+	flag=1;
+	}
+
+	i.close();
+
+	Assert.assertEquals(flag,0,"Writing Price in US Dollars in flat file: Unsuccessful\n");
+	}
+
+	@Test (priority=21,dependsOnMethods="Step21")
+	public void Step22() throws InterruptedException, IOException
+	{
+	//Step 22
+	//Click on "Add To Cart" icon
+
+	a.findElement(By.xpath("//html/body/div[2]//div/div/div/table/tbody/tr/td[6]/button")).click();
+
+	Thread.sleep(3000);
+
+	File sr=((TakesScreenshot)a).getScreenshotAs(OutputType.FILE);
+	FileUtils.copyFile(sr,new File("D:\\Snap\\Snap2.png"));
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div")).getText().substring(0,7),"Success","Add to Cart : Unsuccessful\n");
+	}
+
+	@Test (priority=22,dependsOnMethods="Step22")
+	public void Step23()
+	{
+	//Step 14
+	//Close the success message on the page.
+
+	a.findElement(By.xpath("//html/body/div[2]/div/button")).click();
+
+	int flag=0;
+	if(a.findElement(By.xpath("//html/body/div[2]/div")).getText().substring(0,7).equals("Success"))
+	{
+	flag=1;
+	}
+	Assert.assertEquals(flag,0,"Success Message Close: Unsuccessful\n");
+	}
+
+	@Test (priority=23,dependsOnMethods="Step23")
+	public void Step24()
+	{
+	//Step 24
+	//Click "Remove" icon on the product in My Wishlist page
+
+	a.findElement(By.xpath("//html/body/div[2]//div/div/div/table/tbody/tr/td[6]/a/i")).click();
+
+	Assert.assertEquals(a.findElement(By.xpath("//html/body/div[2]/div")).getText().substring(0,7),"Success","Remove from Wishlist : Unsuccessful\n");
+	}
+
+	@Test (priority=24,dependsOnMethods="Step24")
+	public void Step25() throws InterruptedException
+	{
+	//Step 25
+	//Click on continue.
+
+	Thread.sleep(2000);
+
+	a.findElement(By.xpath("//html/body/div[2]//div[2]/div/div//div/a")).click();
+
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=account/account","Continue : Unsuccessful\n");
+	}
+
+	@Test (priority=25,dependsOnMethods="Step25")
+	public void Step26()
+	{
+	//Step 26
+	//Click on "Logout"
+
+	a.findElement(By.xpath("//html/body/nav/div/div[2]/ul/li[2]/a/i")).click();
+	a.findElement(By.xpath("//html/body/nav/div/div[2]/ul/li[2]/ul/li[5]/a")).click();
+
+	Assert.assertEquals(a.getCurrentUrl(),"https://demo.opencart.com/index.php?route=account/logout","Log Out : Unsuccessful\n");
+	
+	}
+}
+
+
+	
+
+
