@@ -1,5 +1,3 @@
-package Assignment1;
-
 import java.awt.AWTException;
 import java.util.*;
 import org.openqa.selenium.By;
@@ -11,107 +9,172 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 
-public class TestCase4 {
-	WebDriver dr;int ch=1;
-	@BeforeClass
-     public void init() throws AWTException
-        {   
-         if(ch==1)
+	public class Demoqa_4 {
+		WebDriver dr;int browser=1;
+		@BeforeClass
+		public void init() throws AWTException
+        {  
+         if(browser==1)
             {System.setProperty("webdriver.chrome.driver", "D:\\ALM image\\Sel\\chromedriver.exe");
             dr= new ChromeDriver();
             }
-            
-            if(ch==2)
+           
+            if(browser==2)
             {System.setProperty("webdriver.gecko.driver","D:\\ALM image\\Sel\\geckodriver-v0.23.0-win64\\geckodriver.exe");
             dr = new FirefoxDriver();
             }
             dr.get("https://demoqa.com/datepicker/");
 
         }
-		
+
 		@Test
 		void TC1() {
-//			dr.findElement(By.xpath("//*[@id=\"sidebar\"]/aside[2]/ul/li[14]/a")).click();
-			String y="2019";
-			String mon="December";
-			String d="18";
-			int z1=0,c=0,a=0,check;
-			int yy=Integer.parseInt(y),dd=Integer.parseInt(d);
-			check=dd>31 || dd<1?0:1;
-			if(check==0) {
-				System.out.println("Invalid DATE");
-				org.testng.Assert.fail("Invalid DATE");
-			}
-			String x[]= {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-			for(int i=0;i<x.length;i++) {
-				if(x[i].equals(mon)) {
-					z1=1;
-					break;
-				}
-			}
-			if(z1==0){
-				System.out.println("Invalid Month");
-				org.testng.Assert.fail("Invalid Month");
-			}
-			if(mon.equals("February")){
-				a=(yy%400==0)?(c=1):((yy%100==0)?(c=0):((yy%4==0)?(c=1):(c=0)));
-					if(dd>28 && a!=1){
-						System.out.println("Invalid Date for FEBRUARY");
-						org.testng.Assert.fail("Invalid Date for FEBRUARY");
+					// dr.findElement(By.xpath("//*[@id=\"sidebar\"]/aside[2]/ul/li[14]/a")).click();
+					String y="2021";
+					String mon="June";
+					String d="31";
+					int z1=0,c=0,a=0,z2=0,i=0,monthId=0,monId=0,check;String month="";
+					int yy=Integer.parseInt(y),dd=Integer.parseInt(d);
+					check=dd>31?0:1;
+					if(check==0) {
+							System.out.println("Invalid DATE");
+								org.testng.Assert.fail("Invalid DATE");
+								}
+					String x[]= {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+								for(i=0;i<x.length;i++) { 
+									//String checking[]=x[i].split(" ");
+															if(x[i].equals(mon)) {
+																	z1=1;
+																	break;
+															}
+															}
+	if(x[i].equalsIgnoreCase("April") && dd>30 || x[i].equalsIgnoreCase("June") && dd>30 || x[i].equalsIgnoreCase("September") ||  x[i].equalsIgnoreCase("November") && dd>30) {
+		System.out.println("Invalid DATE For  :"+ x[i]);
+		org.testng.Assert.fail("Invalid DATE");
+	}
+
+	
+												monId=i+1;
+												System.out.println(monId);
+												if(z1==0){
+													System.out.println("Invalid Month");
+													org.testng.Assert.fail("Invalid Month");
+												}
+												if(mon.equals("February")){
+													a=(yy%400==0)?(c=1):((yy%100==0)?(c=0):((yy%4==0)?(c=1):(c=0)));
+													if(dd>28 && a!=1){
+														System.out.println("Invalid Date for FEBRUARY");
+														org.testng.Assert.fail("Invalid Date for FEBRUARY");
+													}
+													else   if(a==1){
+														if(dd>29) {
+															System.out.println("Invalid DATE FOR A LEAP YEAR");
+															org.testng.Assert.fail("Invalid DATE FOR A LEAP YEAR");
+														}
+													}
+												}
+												dr.findElement(By.id("datepicker")).click();
+					
+												String year=dr.findElement(By.className("ui-datepicker-year")).getText();
+												int yearr=Integer.parseInt(year);
+												if(yy<yearr) {
+													while(!year.equals(y)){
+														dr.findElement(By.className("ui-datepicker-prev")).click();
+														year =dr.findElement(By.className("ui-datepicker-year")).getText();
+															}
+					
+													month=dr.findElement(By.className("ui-datepicker-month")).getText();
+													while(!month.equals(mon)) {
+														dr.findElement(By.className("ui-datepicker-prev")).click();
+														month =dr.findElement(By.className("ui-datepicker-month")).getText();
+														}
+					
+													List<WebElement> date=dr.findElements(By.className("ui-state-default"));
+														System.out.println(date.size());
+														for( i=0;i<date.size();i++) {
+															if(date.get(i).getText().equals(d)) {
+																date.get(i).click();
+																break;
+															}
+														}
+													}
+												else if(yy>yearr){
+													while(!year.equals(y)){
+														dr.findElement(By.className("ui-datepicker-next")).click();
+														year =dr.findElement(By.className("ui-datepicker-year")).getText();
+													}
+					
+													month=dr.findElement(By.className("ui-datepicker-month")).getText();
+													while(!month.equals(mon)) {
+														dr.findElement(By.className("ui-datepicker-next")).click();
+														month =dr.findElement(By.className("ui-datepicker-month")).getText();
+													}
+													
+													List<WebElement> date=dr.findElements(By.className("ui-state-default"));
+													System.out.println(date.size());
+													for( i=0;i<date.size();i++) {
+														if(date.get(i).getText().equals(d)) {
+															date.get(i).click();
+															break;
+														}
+													}
+												}
+												else if(yy==yearr) {
+					
+													month=dr.findElement(By.className("ui-datepicker-month")).getText();
+													for(i=0;i<x.length;i++) {
+														if(x[i].equals(month)) {
+															z1=1;
+															break;
+															}
+																		}
+															monthId=i+1;
+															System.out.println(monthId);
+															if(monId==monthId) {
+																List<WebElement> date=dr.findElements(By.className("ui-state-default"));
+																for( i=0;i<date.size();i++) {
+																	if(date.get(i).getText().equals(d)) {
+																		z2=1;
+																		date.get(i).click();
+																		break;
+																	}
+																}
+																
+															}
+					
+															else if(monId>monthId){
+					
+																while(!month.equals(mon)) {
+																	dr.findElement(By.className("ui-datepicker-next")).click();
+																	month =dr.findElement(By.className("ui-datepicker-month")).getText();
+																				}
+					
+																List<WebElement> date=dr.findElements(By.className("ui-state-default"));
+					
+																for(i=0;i<date.size();i++) {
+																	if(date.get(i).getText().equals(d)) {
+																		z2=1;
+																		date.get(i).click();
+																		break;
+																	}
+																}
+															}
+															else {
+																while(!month.equalsIgnoreCase(mon)) {
+																	dr.findElement(By.className("ui-datepicker-prev")).click();
+																	month =dr.findElement(By.className("ui-datepicker-month")).getText();
+																	}
+																List<WebElement> date=dr.findElements(By.className("ui-state-default"));
+																for( i=0;i<date.size();i++) {
+																	if(date.get(i).getText().equals(d)) {
+																		z2=1;
+																		date.get(i).click();
+																		break;
+																	}
+																}
+																	
+															}
+					
+												}
 					}
-					else  if(a==1){
-						if(dd>29) {
-						 System.out.println("Invalid DATE FOR A LEAP YEAR");
-						 org.testng.Assert.fail("Invalid DATE FOR A LEAP YEAR");
-					 }
-				}
-			}
-			dr.findElement(By.id("datepicker")).click();
-		
-			String year=dr.findElement(By.className("ui-datepicker-year")).getText();
-			int yearr=Integer.parseInt(year);
-			if(yy<=yearr) {
-			while(!year.equals(y)){
-				dr.findElement(By.className("ui-datepicker-prev")).click();
-				year =dr.findElement(By.className("ui-datepicker-year")).getText();
-			}
-			
-			String month=dr.findElement(By.className("ui-datepicker-month")).getText();
-			while(!month.equals(mon)) {
-				dr.findElement(By.className("ui-datepicker-prev")).click();
-				month =dr.findElement(By.className("ui-datepicker-month")).getText();
-			}
-			
-			List<WebElement> date=dr.findElements(By.className("ui-state-default"));
-			System.out.println(date.size());
-			for(int i=0;i<date.size();i++) {
-				if(date.get(i).getText().equals(d)) {
-					date.get(i).click();
-					break;
-					}
-				}
-			}
-			else {
-				while(!year.equals(y)){
-					dr.findElement(By.className("ui-datepicker-next")).click();
-					year =dr.findElement(By.className("ui-datepicker-year")).getText();
-				}
-				
-				String month=dr.findElement(By.className("ui-datepicker-month")).getText();
-				while(!month.equals(mon)) {
-					dr.findElement(By.className("ui-datepicker-next")).click();
-					month =dr.findElement(By.className("ui-datepicker-month")).getText();
-				}
-				
-				List<WebElement> date=dr.findElements(By.className("ui-state-default"));
-				System.out.println(date.size());
-				for(int i=0;i<date.size();i++) {
-					if(date.get(i).getText().equals(d)) {
-						date.get(i).click();
-						break;
 						}
-					}
-			}
-		}
-		
-}
